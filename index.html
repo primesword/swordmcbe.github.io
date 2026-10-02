@@ -1,11 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#090b12">
+<meta name="description" content="SwordMCBE - Minecraft Bedrock community content platform">
+<title>SwordMCBE</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --bg: #080a10;
+  --panel: #10131c;
+  --panel2: #151925;
+  --border: rgba(255,255,255,.09);
+  --text: #f4f6ff;
+  --muted: #9aa3b8;
+  --accent: #7c5cff;
+  --accent2: #a88cff;
+  --danger: #ff5f6d;
+  --success: #46d99b;
+}
+html,
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(124,92,255,.18), transparent 30%),
+    radial-gradient(circle at 90% 20%, rgba(70,217,155,.08), transparent 25%),
+    var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+body {
+  overflow-x: hidden;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+/* HEADER */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(8,10,16,.78);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: auto;
+  min-height: 70px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 900;
+  white-space: nowrap;
+  letter-spacing: -.5px;
+}
+.logo span {
+  color: var(--accent2);
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+.nav button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 9px 11px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+.nav button:hover,
+.nav button.active {
+  color: white;
+  background: rgba(255,255,255,.07);
+}
+.account-btn {
+  border: 1px solid rgba(124,92,255,.4);
+  background: rgba(124,92,255,.14);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+/* MAIN */
+.container {
+  width: min(1200px, calc(100% - 30px));
+  margin: auto;
+}
+.hero {
+  padding: 80px 0 55px;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-block;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--accent2);
+  background: rgba(124,92,255,.08);
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: clamp(42px, 8vw, 78px);
+  line-height: .95;
+  letter-spacing: -4px;
+  margin-bottom: 20px;
+}
+.hero h1 span {
+  color: var(--accent2);
+}
+.hero p {
+  max-width: 650px;
+  margin: auto;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+.search-box {
+  max-width: 720px;
+  margin: 30px auto 0;
+  display: flex;
+  gap: 10px;
+}
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(255,255,255,.055);
+  border: 1px solid var(--border);
+  color: white;
+  padding: 16px 18px;
+  border-radius: 15px;
+  outline: none;
+}
+.search-box input:focus {
+  border-color: rgba(124,92,255,.7);
+}
+.primary {
+  border: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  padding: 0 20px;
+  border-radius: 15px;
+  font-weight: 900;
+}
+/* SECTIONS */
+.section {
+  padding: 30px 0 60px;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.section-head h2 {
+  font-size: 25px;
+}
+.section-head p {
+  color: var(--muted);
+  font-size: 14px;
+}
+/* CATEGORY CARDS */
+.categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.category {
+  border: 1px solid var(--border);
+  background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+  border-radius: 18px;
+  padding: 22px;
+  transition: .2s ease;
+}
+.category:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124,92,255,.45);
+}
+.category-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+.category h3 {
+  margin-bottom: 5px;
+}
+.category p {
+  color: var(--muted);
+  font-size: 13px;
+}
+/* CONTENT GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+.card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: rgba(16,19,28,.88);
+  border-radius: 18px;
+  transition: .2s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124,92,255,.4);
+}
+.card-image {
+  height: 155px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle, rgba(124,92,255,.25), transparent 55%),
+    #141827;
+  font-size: 48px;
+}
+.card-body {
+  padding: 17px;
+}
+.card-category {
+  display: inline-block;
+  color: var(--accent2);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin-bottom: 7px;
+}
+.card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 39px;
+}
+.card-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.downloads {
+  color: var(--muted);
+  font-size: 12px;
+}
+.small-btn {
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.05);
+  color: white;
+  padding: 8px 11px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+/* EMPTY */
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 55px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  color: var(--muted);
+}
+/* MODAL */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(12px);
+}
+.modal-bg.show {
+  display: flex;
+}
+.modal {
+  width: min(500px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #10131c;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 25px 80px rgba(0,0,0,.5);
+}
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.close {
+  border: 0;
+  background: rgba(255,255,255,.06);
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+}
+.form-group {
+  margin-bottom: 14px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 7px;
+  color: #cbd1df;
+  font-size: 13px;
+  font-weight: 800;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: #0b0e15;
+  color: white;
+  padding: 13px;
+  border-radius: 11px;
+  outline: none;
+}
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: rgba(124,92,255,.7);
+}
+.form-submit {
+  width: 100%;
+  border: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 900;
+  margin-top: 5px;
+}
+.switch {
+  text-align: center;
+  margin-top: 15px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.switch button {
+  border: 0;
+  background: none;
+  color: var(--accent2);
+  font-weight: 800;
+}
+/* TOAST */
+.toast {
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  bottom: 25px;
+  transform: translate(-50%, 120px);
+  background: #171b27;
+  border: 1px solid var(--border);
+  color: white;
+  padding: 13px 17px;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+  transition: .3s ease;
+  max-width: calc(100% - 30px);
+  text-align: center;
+}
+.toast.show {
+  transform: translate(-50%, 0);
+}
+.toast.success {
+  border-color: rgba(70,217,155,.45);
+}
+.toast.error {
+  border-color: rgba(255,95,109,.45);
+}
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 35px 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+}
+/* MOBILE */
+@media (max-width: 800px) {
+  .header-inner {
+    flex-wrap: wrap;
+  }
+  .nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 3px;
+  }
+  .nav button {
+    white-space: nowrap;
+  }
+  .categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hero {
+    padding-top: 55px;
+  }
+}
+@media (max-width: 520px) {
+  .container {
+    width: min(100% - 20px, 1200px);
+  }
+  .logo {
+    font-size: 19px;
+  }
+  .account-btn {
+    margin-left: auto;
+  }
+  .categories,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .search-box {
+    flex-direction: column;
+  }
+  .search-box .primary {
+    min-height: 48px;
+  }
+  .hero h1 {
+    letter-spacing: -2px;
+  }
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#" onclick="showHome(); return false;">
+      ⚔️ Sword<span>MCBE</span>
+    </a>
+    <nav class="nav">
+      <button class="active" id="nav-home" onclick="showHome()">Home</button>
+      <button onclick="filterCategory('Addon')">Addons</button>
+      <button onclick="filterCategory('Map')">Maps</button>
+      <button onclick="filterCategory('Skin')">Skins</button>
+      <button onclick="filterCategory('Texture')">Textures</button>
+    </nav>
+    <button class="account-btn" id="accountButton" onclick="openAuth()">
+      Sign In
+    </button>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">⚔️ MINECRAFT BEDROCK COMMUNITY</div>
+    <h1>
+      Discover.<br>
+      <span>Create.</span><br>
+      Download.
+    </h1>
+    <p>
+      SwordMCBE is a community platform for discovering
+      Minecraft Bedrock addons, maps, skins and textures.
+    </p>
+    <div class="search-box">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search addons, maps, skins..."
+        oninput="searchContent()"
+      >
+      <button class="primary" onclick="searchContent()">
+        Search
+      </button>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Explore</h2>
+        <p>Find your next Minecraft Bedrock project.</p>
+      </div>
+    </div>
+    <div class="categories">
+      <button class="category" onclick="filterCategory('Addon')">
+        <div class="category-icon">🧩</div>
+        <h3>Addons</h3>
+        <p>New gameplay and features</p>
+      </button>
+      <button class="category" onclick="filterCategory('Map')">
+        <div class="category-icon">🌍</div>
+        <h3>Maps</h3>
+        <p>Explore new worlds</p>
+      </button>
+      <button class="category" onclick="filterCategory('Skin')">
+        <div class="category-icon">🎭</div>
+        <h3>Skins</h3>
+        <p>Customize your character</p>
+      </button>
+      <button class="category" onclick="filterCategory('Texture')">
+        <div class="category-icon">🎨</div>
+        <h3>Textures</h3>
+        <p>Change the look of your game</p>
+      </button>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2 id="contentTitle">Latest Uploads</h2>
+        <p id="contentSubtitle">Fresh community content.</p>
+      </div>
+      <button class="small-btn" onclick="loadAddons()">
+        ↻ Refresh
+      </button>
+    </div>
+    <div class="grid" id="contentGrid">
+      <div class="empty">
+        <div style="font-size:35px;margin-bottom:10px;">⚔️</div>
+        Loading SwordMCBE...
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>For Creators</h2>
+        <p>Share your Minecraft Bedrock creations.</p>
+      </div>
+    </div>
+    <div class="category" style="cursor:default;">
+      <div class="category-icon">🚀</div>
+      <h3>Upload your creation</h3>
+      <p style="margin:8px 0 17px;">
+        Sign in to your SwordMCBE account and submit
+        your addon, map, skin or texture.
+      </p>
+      <button class="primary" style="height:45px;" onclick="openUpload()">
+        + Upload Content
+      </button>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="container">
+    ⚔️ SwordMCBE
+    <br>
+    <span style="display:block;margin-top:7px;">
+      A community platform for Minecraft Bedrock creators.
+    </span>
+  </div>
+</footer>
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="authTitle">Sign In</h2>
+      <button class="close" onclick="closeModal('authModal')">×</button>
+    </div>
+    <form id="authForm" onsubmit="handleAuth(event)">
+      <div class="form-group" id="nameGroup" style="display:none;">
+        <label>Username</label>
+        <input
+          id="authName"
+          type="text"
+          maxlength="30"
+          placeholder="Your username"
+        >
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          id="authEmail"
+          type="email"
+          required
+          placeholder="you@example.com"
+        >
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          id="authPassword"
+          type="password"
+          minlength="6"
+          required
+          placeholder="At least 6 characters"
+        >
+      </div>
+      <button class="form-submit" id="authSubmit">
+        Sign In
+      </button>
+    </form>
+    <div class="switch">
+      <span id="switchText">Don't have an account?</span>
+      <button onclick="toggleAuthMode()" id="switchButton">
+        Create one
+      </button>
+    </div>
+  </div>
+</div>
+<!-- UPLOAD MODAL -->
+<div class="modal-bg" id="uploadModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Upload Content</h2>
+      <button class="close" onclick="closeModal('uploadModal')">×</button>
+    </div>
+    <form onsubmit="submitUpload(event)">
+      <div class="form-group">
+        <label>Title</label>
+        <input
+          id="uploadTitle"
+          type="text"
+          maxlength="100"
+          required
+          placeholder="My Awesome Addon"
+        >
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea
+          id="uploadDescription"
+          maxlength="2000"
+          required
+          placeholder="Tell people about your creation..."
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="uploadCategory" required>
+          <option value="Addon">Addon</option>
+          <option value="Map">Map</option>
+          <option value="Skin">Skin</option>
+          <option value="Texture">Texture</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Minecraft Version</label>
+        <input
+          id="uploadVersion"
+          type="text"
+          placeholder="e.g. 1.21"
+        >
+      </div>
+      <div class="form-group">
+        <label>Thumbnail URL</label>
+        <input
+          id="uploadThumbnail"
+          type="url"
+          placeholder="https://..."
+        >
+      </div>
+      <div class="form-group">
+        <label>Download URL</label>
+        <input
+          id="uploadDownload"
+          type="url"
+          placeholder="https://..."
+        >
+      </div>
+      <div class="form-group">
+        <label>Content Version</label>
+        <input
+          id="uploadContentVersion"
+          type="text"
+          placeholder="1.0.0"
+        >
+      </div>
+      <button class="form-submit">
+        Submit for Review
+      </button>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 <script>
-const SUPABASE_URL = "https://bikupdplrwjyveadtbib.supabase.co";
-const SUPABASE_KEY = "sb_publishable_MQAI3YO0utl6W8vb9wxWVA_aFHO2gok";
-
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+const SUPABASE_URL =
+  "https://bikupdplrwjyveadtbib.supabase.co";
+const SUPABASE_KEY =
+  "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+/* =========================================================
+   STATE
+   ========================================================= */
+let authMode = "login";
+let currentUser = null;
+let allAddons = [];
+/* =========================================================
+   TOAST
+   ========================================================= */
+function toast(message, type = "") {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.className = "toast show " + type;
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => {
+    el.className = "toast";
+  }, 3200);
+}
+/* =========================================================
+   MODALS
+   ========================================================= */
+function openModal(id) {
+  document.getElementById(id).classList.add("show");
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove("show");
+}
+function openAuth() {
+  if (currentUser) {
+    logout();
+    return;
+  }
+  openModal("authModal");
+}
+function openUpload() {
+  if (!currentUser) {
+    toast("Please sign in first.");
+    openModal("authModal");
+    return;
+  }
+  openModal("uploadModal");
+}
+/* =========================================================
+   AUTH MODE
+   ========================================================= */
+function toggleAuthMode() {
+  authMode =
+    authMode === "login"
+      ? "signup"
+      : "login";
+  const title =
+    document.getElementById("authTitle");
+  const submit =
+    document.getElementById("authSubmit");
+  const nameGroup =
+    document.getElementById("nameGroup");
+  const switchText =
+    document.getElementById("switchText");
+  const switchButton =
+    document.getElementById("switchButton");
+  if (authMode === "signup") {
+    title.textContent = "Create Account";
+    submit.textContent = "Create Account";
+    nameGroup.style.display = "block";
+    switchText.textContent =
+      "Already have an account?";
+    switchButton.textContent =
+      "Sign in";
+  } else {
+    title.textContent = "Sign In";
+    submit.textContent = "Sign In";
+    nameGroup.style.display = "none";
+    switchText.textContent =
+      "Don't have an account?";
+    switchButton.textContent =
+      "Create one";
+  }
+}
+/* =========================================================
+   SIGN UP / SIGN IN
+   ========================================================= */
+async function handleAuth(event) {
+  event.preventDefault();
+  const email =
+    document.getElementById("authEmail").value.trim();
+  const password =
+    document.getElementById("authPassword").value;
+  const username =
+    document.getElementById("authName").value.trim();
+  const submit =
+    document.getElementById("authSubmit");
+  submit.disabled = true;
+  submit.textContent = "Please wait...";
+  try {
+    if (authMode === "signup") {
+      const { data, error } =
+        await supabaseClient.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username: username || "Player"
+            }
+          }
+        });
+      if (error) throw error;
+      if (data.user) {
+        /*
+         Create profile.
+         If your existing profiles table has different
+         columns, this failure will simply be ignored.
+        */
+        await supabaseClient
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            username: username || "Player"
+          });
+      }
+      toast(
+        "Account created! Check your email if verification is enabled.",
+        "success"
+      );
+      closeModal("authModal");
+    } else {
+      const { error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+      if (error) throw error;
+      toast("Welcome back! ⚔️", "success");
+      closeModal("authModal");
+    }
+  } catch (error) {
+    console.error(error);
+    toast(
+      error.message || "Something went wrong.",
+      "error"
+    );
+  } finally {
+    submit.disabled = false;
+    submit.textContent =
+      authMode === "login"
+        ? "Sign In"
+        : "Create Account";
+  }
+}
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+async function logout() {
+  await supabaseClient.auth.signOut();
+  toast("Signed out.");
+  updateAccountButton();
+}
+/* =========================================================
+   SESSION
+   ========================================================= */
+async function checkSession() {
+  const { data } =
+    await supabaseClient.auth.getSession();
+  currentUser =
+    data.session
+      ? data.session.user
+      : null;
+  updateAccountButton();
+}
+supabaseClient.auth.onAuthStateChange(
+  (_event, session) => {
+    currentUser =
+      session
+        ? session.user
+        : null;
+    updateAccountButton();
+  }
 );
+/* =========================================================
+   ACCOUNT BUTTON
+   ========================================================= */
+function updateAccountButton() {
+  const button =
+    document.getElementById("accountButton");
+  if (!button) return;
+  if (currentUser) {
+    const email =
+      currentUser.email || "";
+    const short =
+      email.length > 18
+        ? email.slice(0, 15) + "..."
+        : email;
+    button.textContent =
+      "👤 " + short;
+  } else {
+    button.textContent =
+      "Sign In";
+  }
+}
+/* =========================================================
+   LOAD ADDONS
+   ========================================================= */
+async function loadAddons() {
+  const grid =
+    document.getElementById("contentGrid");
+  grid.innerHTML = `
+    <div class="empty">
+      <div style="font-size:35px;margin-bottom:10px;">⚔️</div>
+      Loading content...
+    </div>
+  `;
+  try {
+    const { data, error } =
+      await supabaseClient
+        .from("addons")
+        .select("*")
+        .order("created_at", {
+          ascending: false
+        })
+        .limit(30);
+    if (error) throw error;
+    allAddons = data || [];
+    renderAddons(allAddons);
+  } catch (error) {
+    console.error(error);
+    grid.innerHTML = `
+      <div class="empty">
+        <div style="font-size:35px;margin-bottom:10px;">🛠️</div>
+        <strong>Content is loading soon.</strong>
+        <br><br>
+        <span>
+          Your SwordMCBE database is connected,
+          but there are no approved uploads yet.
+        </span>
+      </div>
+    `;
+  }
+}
+/* =========================================================
+   RENDER
+   ========================================================= */
+function renderAddons(items) {
+  const grid =
+    document.getElementById("contentGrid");
+  if (!items || items.length === 0) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div style="font-size:40px;margin-bottom:10px;">📦</div>
+        No content found yet.
+        <br>
+        Be the first creator!
+      </div>
+    `;
+    return;
+  }
+  grid.innerHTML =
+    items.map(item => {
+      const category =
+        item.category || "Addon";
+      const title =
+        escapeHTML(item.title || "Untitled");
+      const description =
+        escapeHTML(
+          item.description ||
+          "No description provided."
+        );
+      const version =
+        escapeHTML(
+          item.minecraft_version ||
+          "Unknown version"
+        );
+      const downloads =
+        Number(item.downloads || 0);
+      let imageHTML = "⚔️";
+      if (item.thumbnail_url) {
+        imageHTML = `
+          <img
+            src="${escapeAttribute(item.thumbnail_url)}"
+            alt=""
+            style="width:100%;height:100%;object-fit:cover;"
+            onerror="this.style.display='none';"
+          >
+        `;
+      }
+      return `
+        <article class="card">
+          <div class="card-image">
+            ${imageHTML}
+          </div>
+          <div class="card-body">
+            <div class="card-category">
+              ${escapeHTML(category)}
+            </div>
+            <h3>${title}</h3>
+            <p>${description}</p>
+            <div class="card-footer">
+              <div class="downloads">
+                ⬇ ${downloads} downloads
+                <br>
+                <span style="font-size:10px;">
+                  MC ${version}
+                </span>
+              </div>
+              ${
+                item.download_url
+                ? `
+                  <button
+                    class="small-btn"
+                    onclick="downloadItem('${escapeAttribute(item.download_url)}', '${item.id}')"
+                  >
+                    Download
+                  </button>
+                `
+                : `
+                  <button
+                    class="small-btn"
+                    onclick="viewItem('${item.id}')"
+                  >
+                    View
+                  </button>
+                `
+              }
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+}
+/* =========================================================
+   SEARCH
+   ========================================================= */
+function searchContent() {
+  const query =
+    document
+      .getElementById("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+  if (!query) {
+    document.getElementById("contentTitle")
+      .textContent = "Latest Uploads";
+    document.getElementById("contentSubtitle")
+      .textContent = "Fresh community content.";
+    renderAddons(allAddons);
+    return;
+  }
+  const results =
+    allAddons.filter(item => {
+      const text = `
+        ${item.title || ""}
+        ${item.description || ""}
+        ${item.category || ""}
+        ${item.minecraft_version || ""}
+      `.toLowerCase();
+      return text.includes(query);
+    });
+  document.getElementById("contentTitle")
+    .textContent = "Search Results";
+  document.getElementById("contentSubtitle")
+    .textContent =
+      results.length +
+      " result" +
+      (results.length === 1 ? "" : "s");
+  renderAddons(results);
+}
+/* =========================================================
+   CATEGORY
+   ========================================================= */
+function filterCategory(category) {
+  const results =
+    allAddons.filter(
+      item =>
+        String(item.category || "").toLowerCase()
+        === category.toLowerCase()
+    );
+  document.getElementById("contentTitle")
+    .textContent = category + "s";
+  document.getElementById("contentSubtitle")
+    .textContent =
+      results.length +
+      " community upload" +
+      (results.length === 1 ? "" : "s");
+  renderAddons(results);
+  window.scrollTo({
+    top: document.getElementById("contentGrid")
+      .getBoundingClientRect().top
+      + window.scrollY
+      - 100,
+    behavior: "smooth"
+  });
+}
+/* =========================================================
+   HOME
+   ========================================================= */
+function showHome() {
+  document.getElementById("searchInput").value = "";
+  document.getElementById("contentTitle")
+    .textContent = "Latest Uploads";
+  document.getElementById("contentSubtitle")
+    .textContent = "Fresh community content.";
+  renderAddons(allAddons);
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
+async function downloadItem(url, addonId) {
+  if (currentUser) {
+    try {
+      await supabaseClient
+        .from("downloads")
+        .insert({
+          user_id: currentUser.id,
+          addon_id: addonId
+        });
+    } catch (error) {
+      console.log("Download record failed:", error);
+    }
+  }
+  window.open(url, "_blank");
+}
+/* =========================================================
+   VIEW ITEM
+   ========================================================= */
+function viewItem(id) {
+  const item =
+    allAddons.find(
+      addon => String(addon.id) === String(id)
+    );
+  if (!item) return;
+  alert(
+    item.title +
+    "\n\n" +
+    (item.description || "No description.")
+  );
+}
+/* =========================================================
+   UPLOAD
+   ========================================================= */
+async function submitUpload(event) {
+  event.preventDefault();
+  if (!currentUser) {
+    closeModal("uploadModal");
+    toast("Please sign in first.");
+    openAuth();
+    return;
+  }
+  const title =
+    document.getElementById("uploadTitle").value.trim();
+  const description =
+    document.getElementById("uploadDescription").value.trim();
+  const category =
+    document.getElementById("uploadCategory").value;
+  const minecraftVersion =
+    document.getElementById("uploadVersion").value.trim();
+  const thumbnail =
+    document.getElementById("uploadThumbnail").value.trim();
+  const download =
+    document.getElementById("uploadDownload").value.trim();
+  const version =
+    document.getElementById("uploadContentVersion").value.trim();
+  try {
+    const { error } =
+      await supabaseClient
+        .from("addons")
+        .insert({
+          creator_id: currentUser.id,
+          title: title,
+          description: description,
+          category: category,
+          minecraft_version: minecraftVersion,
+          thumbnail_url: thumbnail || null,
+          download_url: download || null,
+          version: version || "1.0.0",
+          status: "pending"
+        });
+    if (error) throw error;
+    closeModal("uploadModal");
+    event.target.reset();
+    toast(
+      "Upload submitted for review! 🛡️",
+      "success"
+    );
+    loadAddons();
+  } catch (error) {
+    console.error(error);
+    toast(
+      error.message ||
+      "Upload failed.",
+      "error"
+    );
+  }
+}
+/* =========================================================
+   SECURITY HELPERS
+   ========================================================= */
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+function escapeAttribute(value) {
+  return String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/"/g, "&quot;");
+}
+/* =========================================================
+   CLOSE MODALS BY CLICKING OUTSIDE
+   ========================================================= */
+document
+  .querySelectorAll(".modal-bg")
+  .forEach(modal => {
+    modal.addEventListener("click", event => {
+      if (event.target === modal) {
+        modal.classList.remove("show");
+      }
+    });
+  });
+/* =========================================================
+   START
+   ========================================================= */
+(async function startSwordMCBE() {
+  if (
+    SUPABASE_KEY ===
+    "sb_publishable_MQAI3YO0utl6W8vb9wxWVA_aFHO2gok"
+  ) {
+    document.getElementById("contentGrid")
+      .innerHTML = `
+        <div class="empty">
+          <div style="font-size:40px;margin-bottom:10px;">
+            ⚙️
+          </div>
+          <strong>Supabase isn't connected yet.</strong>
+          <br><br>
+          Replace the Publishable key in
+          <strong>index.html</strong>.
+        </div>
+      `;
+    return;
+  }
+  await checkSession();
+  await loadAddons();
+})();
 </script>
+</body>
+</html>
